@@ -1,7 +1,7 @@
 'use strict';
 
-let click = false;
-let contextmenu = false;
+let isClick = false;
+let isContextmenu = false;
 
 function getNotification(className, message) {
   const notification = document.createElement('div');
@@ -13,8 +13,8 @@ function getNotification(className, message) {
 }
 
 const firstPromise = new Promise((resolve, reject) => {
-  addEventListener('click', () => {
-    click = true;
+  const click = addEventListener('click', () => {
+    isClick = true;
 
     clearTimeout(timerID);
     resolve('First promise was resolved');
@@ -23,40 +23,48 @@ const firstPromise = new Promise((resolve, reject) => {
   const timerID = setTimeout(() => {
     reject(new Error('First promise was rejected'));
   }, 3000);
+
+  removeEventListener('click', click);
 });
 
 const secondPromise = new Promise((resolve) => {
-  addEventListener('click', () => {
-    click = true;
+  const click = addEventListener('click', () => {
+    isClick = true;
 
     resolve('Second promise was resolved');
   });
 
-  addEventListener('contextmenu', (e) => {
+  const menu = addEventListener('contextmenu', (e) => {
     e.preventDefault();
 
-    contextmenu = true;
+    isContextmenu = true;
 
     resolve('Second promise was resolved');
   });
+
+  removeEventListener('click', click);
+  removeEventListener('contextmenu', menu);
 });
 
 const thirdPromise = new Promise((resolve) => {
-  addEventListener('click', () => {
-    if (contextmenu) {
+  const click = addEventListener('click', () => {
+    if (isContextmenu) {
       resolve('Third promise was resolved');
     }
   });
 
-  addEventListener('contextmenu', () => {
-    if (click) {
+  const menu = addEventListener('contextmenu', () => {
+    if (isClick) {
       resolve('Third promise was resolved');
     }
   });
+
+  removeEventListener('click', click);
+  removeEventListener('contextmenu', menu);
 });
 
 async function handleAllPromises(promises) {
-  await promises.forEach((promise) => {
+  promises.forEach((promise) => {
     promise
       .then((success) => {
         getNotification('success', success);
