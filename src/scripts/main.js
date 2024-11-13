@@ -13,9 +13,8 @@ function getNotification(className, message) {
 }
 
 const firstPromise = new Promise((resolve, reject) => {
-  const click = addEventListener('click', () => {
+  addEventListener('click', () => {
     isClick = true;
-
     clearTimeout(timerID);
     resolve('First promise was resolved');
   });
@@ -23,44 +22,33 @@ const firstPromise = new Promise((resolve, reject) => {
   const timerID = setTimeout(() => {
     reject(new Error('First promise was rejected'));
   }, 3000);
-
-  removeEventListener('click', click);
 });
 
 const secondPromise = new Promise((resolve) => {
-  const click = addEventListener('click', () => {
+  addEventListener('click', () => {
     isClick = true;
-
     resolve('Second promise was resolved');
   });
 
-  const menu = addEventListener('contextmenu', (e) => {
+  addEventListener('contextmenu', (e) => {
     e.preventDefault();
-
     isContextmenu = true;
-
     resolve('Second promise was resolved');
   });
-
-  removeEventListener('click', click);
-  removeEventListener('contextmenu', menu);
 });
 
 const thirdPromise = new Promise((resolve) => {
-  const click = addEventListener('click', () => {
+  addEventListener('click', () => {
     if (isContextmenu) {
       resolve('Third promise was resolved');
     }
   });
 
-  const menu = addEventListener('contextmenu', () => {
+  addEventListener('contextmenu', () => {
     if (isClick) {
       resolve('Third promise was resolved');
     }
   });
-
-  removeEventListener('click', click);
-  removeEventListener('contextmenu', menu);
 });
 
 async function handleAllPromises(promises) {
